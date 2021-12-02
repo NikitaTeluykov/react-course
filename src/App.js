@@ -1,4 +1,4 @@
-import './App.css';
+import classes from './App.module.scss';
 import React, {Component} from "react";
 import Car from "./Car/Car";
 
@@ -58,12 +58,21 @@ class App extends Component {
         }
 
         return (
-            <div style={divStyle}>
+            <div style={divStyle} className={classes.App}>
+                <header className={classes['App-header']}>
+                    <a href="https://reactjs.org" className={classes['App-link']}>React</a>
+                </header>
                 <h1 style={{color: 'blue', fontSize: '20px'}}>{this.state.pageTitle}</h1>
 
                 <button onClick={this.toggleCarsHandler}>Toggle cars</button>
 
-                {cars}
+                <div style={{
+                    width: 400,
+                    margin: 'auto',
+                    paddingTop: "20px"
+                }}>
+                    {cars}
+                </div>
             </div>
         )
     }
