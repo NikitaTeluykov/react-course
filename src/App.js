@@ -1,16 +1,26 @@
 import classes from './App.module.scss';
 import React, {Component} from "react";
 import Car from "./Car/Car";
+import ErrorBoundary from "./ErrorBoundary/ErrorBoundary";
+import Counter from "./Counter/Counter";
+
+export const ClickedContext = React.createContext(false)
 
 class App extends Component {
-    state = {
-        cars: [
-            {name: 'Ford', year: 2018},
-            {name: 'Audi', year: 2016},
-            {name: 'Mazda', year: 2010},
-        ],
-        pageTitle: 'React Components',
-        showCars: false
+    constructor(props) {
+        console.log('App constructor')
+        super(props);
+
+        this.state = {
+            clicked: false,
+            cars: [
+                {name: 'Ford', year: 2018},
+                {name: 'Audi', year: '2016'},
+                {name: 'Mazda', year: 2010},
+            ],
+            pageTitle: 'React Components',
+            showCars: false
+        }
     }
 
     onChangeName(name, index) {
@@ -32,11 +42,17 @@ class App extends Component {
         const cars = this.state.cars.concat()
 
         cars.splice(index, 1);
-        console.log(cars)
         this.setState({cars})
     }
 
+    componentDidMount() {
+        console.log('App componentDidMount')
+    }
+
+
+
     render() {
+        console.log('App render')
         const divStyle = {
             textAlign: 'center'
         }
@@ -46,26 +62,30 @@ class App extends Component {
         if (this.state.showCars) {
             cars = this.state.cars.map((car, index) => {
                 return (
-                    <Car
-                        key={index}
-                        name={car.name}
-                        year={car.year}
-                        onChangeName={(e)=>this.onChangeName(e.target.value, index)}
-                        onDelete={this.deleteHandler.bind(this, index)}
-                    />
+                    <ErrorBoundary key={index}>
+                        <Car
+                            name={car.name}
+                            year={car.year}
+                            index = {index}
+                            onChangeName={(e)=>this.onChangeName(e.target.value, index)}
+                            onDelete={this.deleteHandler.bind(this, index)}
+                        />
+                    </ErrorBoundary>
                 )
             })
         }
 
         return (
             <div style={divStyle} className={classes.App}>
-                <header className={classes['App-header']}>
-                    <a href="https://reactjs.org" className={classes['App-link']}>React</a>
-                </header>
-                <h1 style={{color: 'blue', fontSize: '20px'}}>{this.state.pageTitle}</h1>
+                <ClickedContext.Provider value={this.state.clicked}>
+                    <Counter />
+                </ClickedContext.Provider>
 
-                <button onClick={this.toggleCarsHandler}>Toggle cars</button>
 
+                <hr/>
+                <h1>{this.props.title}</h1>
+                <button onClick={this.toggleCarsHandler} style={{marginTop: '20px'}}>Toggle cars</button>
+                <button onClick={()=> this.setState({clicked: true})}>Change clicked</button>
                 <div style={{
                     width: 400,
                     margin: 'auto',
